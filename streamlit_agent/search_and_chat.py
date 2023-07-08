@@ -1,8 +1,12 @@
 from langchain.agents import initialize_agent, AgentType
 from langchain.callbacks import StreamlitCallbackHandler
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, AzureChatOpenAI
 from langchain.tools import DuckDuckGoSearchRun
 import streamlit as st
+
+from dotenv import load_dotenv, find_dotenv
+
+_ = load_dotenv(find_dotenv())  # read local .env file
 
 st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
 st.title("🦜 LangChain: Chat with search")
@@ -18,11 +22,10 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    if not openai_api_key:
-        st.info("Please add your OpenAI API key to continue.")
-        st.stop()
+    llm = AzureChatOpenAI(
+        deployment_name="GPT4-8k", openai_api_version="2023-03-15-preview", streaming=True
+    )
 
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=openai_api_key, streaming=True)
     search_agent = initialize_agent(
         tools=[DuckDuckGoSearchRun(name="Search")],
         llm=llm,
