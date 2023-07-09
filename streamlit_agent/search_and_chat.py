@@ -5,19 +5,29 @@ from langchain.tools import DuckDuckGoSearchRun
 import streamlit as st
 from streamlit_agent.utils import to_langchain_messages
 from streamlit_agent.streaming_message import StreamingChatCallbackHandler
+from streamlit_agent.hitstory import *
+from streamlit_agent.components import *
 
 from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())  # read local .env file
 
 st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
-st.title("🦜 LangChain: Chat with search")
+st.title("Chat")
+
 
 with st.sidebar:
-    openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
-    plugin = st.selectbox("Plugin", ["None", "Search"])
+    # openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        new_chat_button()
+    with col2:
+        save_chat_button()
 
-    st.session_state["select_plugin"] = plugin
+    plugin_selector()
+    st.divider()
+    history_list()
+
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
