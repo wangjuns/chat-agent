@@ -7,6 +7,7 @@ from streamlit_agent.utils import to_langchain_messages
 from streamlit_agent.streaming_message import StreamingChatCallbackHandler
 from streamlit_agent.hitstory import *
 from streamlit_agent.components import *
+from streamlit_agent.tools import tool_map
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -45,9 +46,9 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
         streaming=True,
     )
 
-    if st.session_state["select_plugin"] == "Search":
+    if st.session_state["select_plugin"] != "None":
         search_agent = initialize_agent(
-            tools=[DuckDuckGoSearchRun(name="Search")],
+            tools=[tool_map[st.session_state["select_plugin"]]],
             llm=llm,
             agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             handle_parsing_errors=True,

@@ -3,6 +3,7 @@ from typing import Iterator
 import streamlit as st
 
 from streamlit_agent.hitstory import *
+from streamlit_agent.tools import tool_map
 
 
 def save_current_message():
@@ -35,7 +36,7 @@ def save_chat_button():
 
 
 def plugin_selector():
-    plugin = st.selectbox("Plugin", ["None", "Search"])
+    plugin = st.selectbox("Plugin", ["None"] + list(tool_map.keys()))
     st.session_state["select_plugin"] = plugin
 
 
