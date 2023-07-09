@@ -44,7 +44,7 @@ def remove_history_item(key: str):
 
 @st.cache_data
 def load_history():
-    files = os.listdir("data")
+    files = os.listdir(history_data_store_path)
     files = sorted(files, reverse=True)
     return [load_history_item(file) for file in files]
 
