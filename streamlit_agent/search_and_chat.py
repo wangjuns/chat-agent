@@ -3,15 +3,16 @@ from langchain.callbacks import StreamlitCallbackHandler
 from langchain.chat_models import ChatOpenAI, AzureChatOpenAI
 from langchain.tools import DuckDuckGoSearchRun
 import streamlit as st
+from dotenv import load_dotenv, find_dotenv
+
+_ = load_dotenv(find_dotenv())  # read local .env file
+
 from streamlit_agent.utils import to_langchain_messages
 from streamlit_agent.streaming_message import StreamingChatCallbackHandler
 from streamlit_agent.hitstory import *
 from streamlit_agent.components import *
 from streamlit_agent.tools import tool_map
 
-from dotenv import load_dotenv, find_dotenv
-
-_ = load_dotenv(find_dotenv())  # read local .env file
 
 st.set_page_config(page_title="Chat & Agent", page_icon="🦜")
 # st.title("Chat")
