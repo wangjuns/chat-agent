@@ -12,8 +12,8 @@ from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())  # read local .env file
 
-st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
-st.title("Chat")
+st.set_page_config(page_title="Chat & Agent", page_icon="🦜")
+# st.title("Chat")
 
 
 with st.sidebar:

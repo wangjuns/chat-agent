@@ -1,4 +1,7 @@
+from typing import Iterator
+
 import streamlit as st
+
 from streamlit_agent.hitstory import *
 
 
@@ -9,8 +12,10 @@ def save_current_message():
         current_messages,
         key=None if "select_item" not in st.session_state else st.session_state["select_item"],
     )
+
+    chat_session = ChatSession(key=key, content=current_messages)
     # save to session state
-    add_messsages_to_history_state([key, get_history_title(current_messages), current_messages])
+    add_messsages_to_history_state(chat_session)
     return key
 
 
@@ -35,12 +40,15 @@ def plugin_selector():
 
 
 def history_list():
-    for h in st.session_state["history"][:20]:
+    if "history" not in st.session_state:
+        st.session_state.history = load_history()
+
+    for h in st.session_state["history"]:
         col1, col2 = st.columns([8, 2])
 
         with col1:
-            st.markdown(h[1])
+            st.markdown(h.title)
         with col2:
-            st.button(":recycle:", key=f"y_{h[0]}", on_click=use_history_messages, args=[h[0]])
-            st.button(":x:", key=f"x_{h[0]}", on_click=remove_history_item, args=[h[0]])
+            st.button(":recycle:", key=f"y_{h.key}", on_click=use_history_messages, args=[h.key])
+            st.button(":x:", key=f"x_{h.key}", on_click=remove_history_item, args=[h.key])
         st.divider()
