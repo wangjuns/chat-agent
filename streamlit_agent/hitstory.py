@@ -76,9 +76,22 @@ def save_message_to_file(messages: List[dict[str, str]], key=None):
 
 
 def add_messsages_to_history_state(chat_session: ChatSession):
-    for h in st.session_state["history"]:
-        if h.key == chat_session.key:
-            # TODO should replace item
-            return
+    if "history" not in st.session_state:
+        st.session_state["history"] = [chat_session]
+        return
+
+    current_idx = next(
+        (
+            idx
+            for idx, value in enumerate(st.session_state["history"])
+            if value.key == chat_session.key
+        ),
+        None,
+    )
+    print(f"current key: {current_idx}")
+
+    if current_idx is not None:
+        st.session_state["history"][current_idx] = chat_session
+        return
 
     st.session_state["history"].insert(0, chat_session)
