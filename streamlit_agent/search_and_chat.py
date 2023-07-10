@@ -53,6 +53,7 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
             llm=llm,
             agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             handle_parsing_errors=True,
+            verbose=True,
         )
         with st.chat_message("assistant"):
             st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
