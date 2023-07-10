@@ -1,7 +1,6 @@
 from langchain.agents import initialize_agent, AgentType
 from langchain.callbacks import StreamlitCallbackHandler
-from langchain.chat_models import ChatOpenAI, AzureChatOpenAI
-from langchain.tools import DuckDuckGoSearchRun
+from langchain.chat_models import AzureChatOpenAI
 import streamlit as st
 from dotenv import load_dotenv, find_dotenv
 
