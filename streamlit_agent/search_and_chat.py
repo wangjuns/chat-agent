@@ -25,6 +25,16 @@ with st.sidebar:
     with col2:
         save_chat_button()
 
+    if "OPENAI_API_KEY" not in os.environ:
+        openai_api_key = st.text_input("openai key", type="password")
+    else:
+        openai_api_key = os.environ["OPENAI_API_KEY"]
+
+    if "OPENAI_API_BASE" not in os.environ:
+        openai_api_base = st.text_input("openai api base")
+    else:
+        openai_api_base = os.environ["OPENAI_API_BASE"]
+
     plugin_selector()
     st.divider()
     history_list()
@@ -44,6 +54,8 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
         deployment_name="GPT4-8k",
         openai_api_version="2023-03-15-preview",
         streaming=True,
+        openai_api_key=openai_api_key,
+        openai_api_base=openai_api_base,
     )
 
     if st.session_state["select_plugin"] != "None":
