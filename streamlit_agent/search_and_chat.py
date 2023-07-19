@@ -19,11 +19,7 @@ st.set_page_config(page_title="Chat & Agent", page_icon="🦜")
 
 with st.sidebar:
     # openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        new_chat_button()
-    with col2:
-        save_chat_button()
+    new_chat_button()
 
     if "OPENAI_API_KEY" not in os.environ:
         openai_api_key = st.text_input("openai key", type="password")
@@ -40,6 +36,11 @@ with st.sidebar:
     history_list()
 
 
+def update_state(chat):
+    st.session_state["messages"].append(chat)
+    save_current_chat(chat)
+
+
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
@@ -47,7 +48,7 @@ for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    update_state({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
     llm = AzureChatOpenAI(
@@ -69,7 +70,7 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
         with st.chat_message("assistant"):
             st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
             response = search_agent.run(st.session_state.messages, callbacks=[st_cb])
-            st.session_state.messages.append({"role": "assistant", "content": response})
+            update_state({"role": "assistant", "content": response})
             st.write(response)
     else:
         with st.chat_message("assistant"):
@@ -81,4 +82,4 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
                 callbacks=[st_cb],
             )
 
-            st.session_state.messages.append({"role": "assistant", "content": response.content})
+            update_state({"role": "assistant", "content": response.content})

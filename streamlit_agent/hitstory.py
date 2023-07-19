@@ -31,9 +31,11 @@ class ChatSession(BaseModel):
 
 def load_history_item(file_name: str) -> ChatSession:
     with open(f"{history_data_store_path}/{file_name}", "r") as f:
-        content = f.read()
-        messages = json.loads(content)
-        return ChatSession(key=file_name.split(".")[0], content=messages)
+        data = []
+        for line in f:
+            data.append(json.loads(line))
+
+        return ChatSession(key=file_name.split(".")[0], content=data)
 
 
 def remove_history_item(key: str):
@@ -45,12 +47,13 @@ def remove_history_item(key: str):
 @st.cache_data
 def load_history():
     files = os.listdir(history_data_store_path)
+    files = [file for file in files if file.endswith(".jsonl")]
     files = sorted(files, reverse=True)
     return [load_history_item(file) for file in files]
 
 
 def use_history_messages(key: str):
-    st.session_state["select_item"] = key
+    st.session_state["chat_key"] = key
     history = st.session_state["history"]
     items = [h for h in history if h.key == key]
     if len(items) == 0:
@@ -63,11 +66,12 @@ def generate_chat_session_key() -> str:
     return str(int(time.time()))
 
 
-def save_message_to_file(messages: List[dict[str, str]], key=None):
-    if not key:
-        key = generate_chat_session_key()
-    with open(f"{history_data_store_path}/{key}.json", "w", encoding="utf-8") as f:
-        f.write(json.dumps(messages, ensure_ascii=False))
+def append_message_to_file(message: dict[str, str], key):
+    assert key is not None, "key is None"
+
+    with open(f"{history_data_store_path}/{key}.jsonl", "a", encoding="utf-8") as f:
+        line = json.dumps(message, ensure_ascii=False)
+        f.write(line + "\n")
         f.flush()
 
     # clear cache when file changed

@@ -6,33 +6,26 @@ from streamlit_agent.hitstory import *
 from streamlit_agent.tools import tool_map
 
 
-def save_current_message():
-    current_messages = st.session_state["messages"]
-    # save to file
-    key = save_message_to_file(
-        current_messages,
-        key=None if "select_item" not in st.session_state else st.session_state["select_item"],
-    )
+def save_current_chat(chat: List[dict[str, str]]):
+    if "chat_key" not in st.session_state:
+        st.session_state.chat_key = generate_chat_session_key()
 
-    chat_session = ChatSession(key=key, content=current_messages)
+    append_message_to_file(chat, st.session_state.chat_key)
+
+    current_messages = st.session_state["messages"]
+    chat_session = ChatSession(key=st.session_state.chat_key, content=current_messages)
     # save to session state
     add_messsages_to_history_state(chat_session)
-    return key
+    return st.session_state.chat_key
 
 
 def new_chat_button():
     if st.button("New Chat"):
-        save_current_message()
+        # save_current_message()
 
         del st.session_state.messages
-        if "select_item" in st.session_state:
-            del st.session_state.select_item
-
-
-def save_chat_button():
-    if st.button("Save Chat"):
-        key = save_current_message()
-        st.session_state.select_item = key
+        if "chat_key" in st.session_state:
+            del st.session_state.chat_key
 
 
 def plugin_selector():
@@ -50,6 +43,11 @@ def history_list():
         with col1:
             st.markdown(h.title)
         with col2:
-            st.button(":recycle:", key=f"y_{h.key}", on_click=use_history_messages, args=[h.key])
+            st.button(
+                ":recycle:",
+                key=f"y_{h.key}",
+                on_click=use_history_messages,
+                args=[h.key],
+            )
             st.button(":x:", key=f"x_{h.key}", on_click=remove_history_item, args=[h.key])
         st.divider()
