@@ -42,7 +42,7 @@ def update_state(chat):
 
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+    st.session_state["messages"] = [system_chat]
 
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])

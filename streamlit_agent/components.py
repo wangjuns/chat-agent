@@ -6,9 +6,14 @@ from streamlit_agent.hitstory import *
 from streamlit_agent.tools import tool_map
 
 
+system_chat = {"role": "assistant", "content": "How can I help you?"}
+
+
 def save_current_chat(chat: List[dict[str, str]]):
     if "chat_key" not in st.session_state:
         st.session_state.chat_key = generate_chat_session_key()
+        # save system setting first.
+        append_message_to_file(system_chat, st.session_state.chat_key)
 
     append_message_to_file(chat, st.session_state.chat_key)
 
