@@ -41,7 +41,7 @@ def load_history_item(file_name: str) -> ChatSession:
 def remove_history_item(key: str):
     print(f"remove key {key}")
     st.session_state["history"] = [h for h in st.session_state["history"] if h.key != key]
-    os.remove(f"{history_data_store_path}/{key}.json")
+    os.remove(f"{history_data_store_path}/{key}.jsonl")
 
 
 @st.cache_data
